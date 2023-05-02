@@ -1,12 +1,11 @@
-import uuid
-
 import weaviate
 from weaviate import Client
 from weaviate.embedded import EmbeddedOptions
 from weaviate.util import generate_uuid5
 
-from autogpt.config import Config
-from autogpt.memory.base import MemoryProviderSingleton, get_ada_embedding
+from autogpt.llm import get_ada_embedding
+from autogpt.logs import logger
+from autogpt.memory.base import MemoryProviderSingleton
 
 
 def default_schema(weaviate_index):
@@ -37,7 +36,7 @@ class WeaviateMemory(MemoryProviderSingleton):
                 )
             )
 
-            print(
+            logger.info(
                 f"Weaviate Embedded running on: {url} with persistence path: {cfg.weaviate_embedded_path}"
             )
         else:
@@ -118,7 +117,7 @@ class WeaviateMemory(MemoryProviderSingleton):
                 return []
 
         except Exception as err:
-            print(f"Unexpected error {err=}, {type(err)=}")
+            logger.warn(f"Unexpected error {err=}, {type(err)=}")
             return []
 
     def get_stats(self):
